@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="Order">
+ 
+    <!-- <resultMap id="result" type="Order">
+        <result property="orderid" column="orderid"/>
+        <result property="shipto" column="shipto"/>
+        <result property="country" column="country" />
+        <result property="price" column="price" />   
+    </resultMap> -->
+    
+   <!-- <parameterMap id="parameter" type="java.util.HashMap">
+        <parameter property="orderid" column="orderid"/>
+        <parameter property="shipto" column="shipto"/>
+        <parameter property="country" column="country" />
+        <parameter property="price" column="price" />   
+    </parameterMap> -->
+ 
+    <!-- <select id="selectAll" resultMap="result">
+        SELECT * FROM orders;
+    </select>
+ 
+    <select id="selectById" parameterType="int" resultMap="result">
+        SELECT * FROM orders 
+        WHERE orderid = #{orderid}
+    </select> -->
+ 
+    <insert id="insert" parameterType="java.util.HashMap"> <!-- useGeneratedKeys="true" keyProperty="id" -->
+        INSERT INTO orders (orderid,shipto,country,price) VALUES (#{orderid},#{shipto},#{country},#{price});
+    </insert>
+ 
+   <!--  <update id="update" parameterType="Person">
+        UPDATE persons
+        SET name = #{name}
+        WHERE id = #{id} 
+    </update>
+ 
+    <delete id="delete" parameterType="int">
+        DELETE from persons 
+        WHERE id = #{id}
+    </delete> -->
+</mapper>

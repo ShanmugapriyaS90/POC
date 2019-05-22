@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:int="http://www.springframework.org/schema/integration" 
+xmlns:int-stream= "http://www.springframework.org/schema/integration/stream" 
+xmlns:int-file= "http://www.springframework.org/schema/integration/file"
+xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
+xsi:schemaLocation=" http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-4.3.xsd 
+http://www.springframework.org/schema/integration 
+http://www.springframework.org/schema/integration/spring-integration-4.3.xsd 
+http://www.springframework.org/schema/integration/stream 
+http://www.springframework.org/schema/integration/stream/spring-integration-stream-4.3.xsd
+http://www.springframework.org/schema/integration/file 
+http://www.springframework.org/schema/integration/file/spring-integration-file-4.3.xsd 
+http://www.springframework.org/schema/integration/xml
+http://www.springframework.org/schema/integration/xml/spring-integration-xml-4.3.xsd" >
+
+<!-- Component Scan -->
+<context:component-scan base-package="com.intertech.lab1"></context:component-scan>
+
+<!--  Adapter for std stream -->
+<int-stream:stdin-channel-adapter id="producer" channel="inboundChannel" >
+</int-stream:stdin-channel-adapter> 
+<int-stream:stdout-channel-adapter id="consumer1" channel="outboundChannel" append-newline="true" />
+<int:poller id="defaultPoller" default="true" max-messages-per-poll="5" fixed-rate="500"/> 
+<!--<int-stream:stdout-channel-adapter id="consumer2" channel="messageChannel" append-newline="true" /> -->
+<!--  Adapter for std stream -->
+
+<!-- Adapter for reading files -->
+<!-- <int-file:inbound-channel-adapter id="producer-file-adapter" channel="inboundChannel" filename-regex=".*\.xml$" directory="file:c://inbound" prevent-duplicates="true">
+	<int:poller fixed-rate="5000" />
+</int-file:inbound-channel-adapter> -->
+
+<!-- <int-file:outbound-channel-adapter id="consumer-file-adapter" channel="outboundChannel" directory="file:c://outbound">
+</int-file:outbound-channel-adapter> -->
+<!-- Adapter for reading files -->
+<!--  chaining -->
+<!-- <int:chain input-channel="inboundChannel" output-channel="outboundChannel">
+	 'transformer
+	<int-file:file-to-string-transformer id="stringTransformer"  charset="UTF-8" />
+	 'filter 
+	<int-xml:xpath-filter id="xpathSelector"  
+						match-type="exact" xpath-expression-ref="filterExp" />
+	 'validation filter 
+	<int-xml:validating-filter id="validator"  schema-location="file:c://inbound//xsd//shiporder.xsd"></int-xml:validating-filter> 	
+		
+</int:chain> -->
+<!--  filter -->
+<!-- <int:filter id="fileSelector" input-channel="inboundChannel" output-channel="nullChannel" ref="selector" /> -->
+						
+<!-- xpath expression -->
+<!-- <int-xml:xpath-expression id="filterExp" expression="//country='Norway'" /> -->
+
+<!-- transformers -->
+<int:transformer input-channel="inboundChannel" output-channel="outboundChannel" ref="transformer"></int:transformer>
+
+<!-- direct channel -->
+<!-- <int:channel id="messageChannel"></int:channel> -->
+<int:channel id="inboundChannel"></int:channel>
+<int:channel id="outboundChannel"></int:channel>
+<!-- <int:channel id="xml-inboundChannel"></int:channel> -->
+
+
+<!-- beans  -->
+<bean id="selector" class="com.intertech.lab1.filters.FileSelector" />
+<bean id="transformer" class="com.intertech.lab1.filters.FileTransformer" />
+</beans>

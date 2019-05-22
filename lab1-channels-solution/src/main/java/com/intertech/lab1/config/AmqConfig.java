@@ -1,0 +1,18 @@
+package com.intertech.lab1.config;
+
+import org.apache.activemq.command.ActiveMQQueue;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+ 
+import javax.jms.Queue;
+ 
+@Configuration
+public class AmqConfig {
+ 
+    public static final String QUEUE = "InQueue";
+ 
+    @Bean
+    public Queue JMSQueue() {
+        return new ActiveMQQueue(QUEUE);
+    }
+}

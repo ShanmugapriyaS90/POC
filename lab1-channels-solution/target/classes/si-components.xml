@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-file="http://www.springframework.org/schema/integration/file"
+	xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+	http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
+	http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+
+<import resource="classpath:mybatis-config.xml" />
+<import resource="classpath:integration-spring-batch-jdbc-config.xml" />
+<int:channel id="inboundChannel"></int:channel>
+<int:channel id="outboundChannel"></int:channel>
+<int:channel id="json-inboundChannel"></int:channel>
+<int:channel id="str-inboundChannel"></int:channel>
+
+<int-file:inbound-channel-adapter id="inboundAdapter" channel="inboundChannel" 
+					prevent-duplicates="true" filename-regex=".*\.xml$" directory="file:c://inbound">
+	<int:poller fixed-rate="20000" max-messages-per-poll="1"></int:poller>
+</int-file:inbound-channel-adapter>
+
+<int-file:outbound-channel-adapter id="outboundAdapter" channel="outboundChannel" directory="file:c://inbound//outbound" />
+
+<int:chain id="flowChain" input-channel="inboundChannel" output-channel="outboundChannel" >
+	<int-file:file-to-string-transformer id="file-2-string-transformer" charset="UTF-8"/>	
+	<int:transformer id="xml-2-json-transformer" ref="xml2jsonTransformer"/>
+</int:chain> 
+<int-file:file-to-string-transformer id="file-2-string-transformer" input-channel="inboundChannel" 
+																	output-channel="str-inboundChannel" charset="UTF-8"/>
+<int:splitter id="json-msg-splitter" method="split" ref="jsonSplitter" input-channel="str-inboundChannel" 
+												output-channel="json-inboundChannel"></int:splitter>
+<!-- <int:chain id="flowChain" input-channel="json-inboundChannel" output-channel="outboundChannel" > -->
+	<int:service-activator id="insertDB" ref="dbServiceActivator" input-channel="json-inboundChannel" 
+	output-channel="outboundChannel" method="insertToDB" />
+	<!-- <int:service-activator id="printing-service-activator" ref="serviceActivator" method="printShiporder" /> -->  
+<!-- </int:chain> --> 
+<!-- <int:service-activator id="insertDB" ref="dbServiceActivator" input-channel="outboundChannel" output-channel="nullChannel"
+method="insertToDB" />  -->
+<bean id="xml2jsonTransformer" class="com.intertech.lab1.transformers.XMLtoJSONTransformer" />
+<bean id="jsonSplitter" class="com.intertech.lab1.splitters.JsonSplitter" />
+<bean id="serviceActivator" class="com.intertech.lab1.activators.FileServiceActivator" />
+<bean id="dbServiceActivator" class="com.intertech.lab1.activators.DBServiceActivator" />
+<!-- <bean id="headerEnricher" class="com.intertech.lab1.enrichers.FileHeaderEnricher" /> -->
+
+<!--  data source config -->
+<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/ems" />
+        <property name="username" value="root" />
+        <property name="password" value="root" />
+    </bean>
+ 
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis-config.xml" />
+    </bean>  --> 
+
+<!--  data source config -->
+</beans>
+

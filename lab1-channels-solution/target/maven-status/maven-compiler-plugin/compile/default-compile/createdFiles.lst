@@ -1,0 +1,4 @@
+com\intertech\lab1\controllers\StartupController.class
+com\intertech\lab1\transformers\FileTransformer.class
+com\intertech\lab1\Startup.class
+com\intertech\lab1\filters\FileSelector.class

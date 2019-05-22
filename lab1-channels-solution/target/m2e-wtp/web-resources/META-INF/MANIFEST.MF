@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Built-By: s.siddhananthan
+Build-Jdk: 1.8.0_161
+Implementation-Title: Spring Integration Lab 1
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.intertech.si
+Implementation-Vendor: Pivotal Software, Inc.
+Created-By: Maven Integration for Eclipse
+
